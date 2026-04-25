@@ -59,6 +59,12 @@ class Dashboard : AppCompatActivity() {
                 .show()
         }
 
+        val btnChallenge = findViewById<Button>(R.id.btnChallenge)
+        btnChallenge.setOnClickListener {
+            val intent = Intent(this, NoSpendChallengeActivity::class.java)
+            startActivity(intent)
+        }
+
         lifecycleScope.launch {
             try {
                 db.expenseDao().getAllExpenses().collect { expenses ->

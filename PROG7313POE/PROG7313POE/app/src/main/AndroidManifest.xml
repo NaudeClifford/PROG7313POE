@@ -29,6 +29,8 @@
         <activity
             android:name=".ui.ViewImage" />
         <activity
+            android:name=".ui.NoSpendChallengeActivity" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -36,6 +38,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 

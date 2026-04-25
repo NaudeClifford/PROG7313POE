@@ -109,6 +109,7 @@
                 android:layout_height="wrap_content"/>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnChallenge"
                 android:text="Challenge"
                 android:background="@drawable/btn_gradient"
                 android:backgroundTint="@null"
