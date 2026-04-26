@@ -18,4 +18,8 @@ class CategoryRepository(private val categoryDao: CategoryDao) {
     suspend fun delete(category: Category) {
         categoryDao.delete(category)
     }
+
+    suspend fun categoryExists(userId: String, name: String): Int {
+        return categoryDao.categoryExists(userId, name)
+    }
 }

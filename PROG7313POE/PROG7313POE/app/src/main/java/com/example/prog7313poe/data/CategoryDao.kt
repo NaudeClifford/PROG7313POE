@@ -18,4 +18,7 @@ interface CategoryDao {
 
     @Query("SELECT * FROM categories WHERE userId = :userId")
     fun getCategories(userId: String): LiveData<List<Category>>
+
+    @Query("SELECT COUNT(*) FROM categories WHERE userId = :userId AND LOWER(name) = LOWER(:name)")
+    suspend fun categoryExists(userId: String, name: String): Int
 }

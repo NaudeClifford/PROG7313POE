@@ -1,5 +1,6 @@
 package com.example.prog7313poe.ui
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class CategoryAdapter(
         val txtName: TextView = itemView.findViewById(R.id.txtCategoryName)
         val txtAmount: TextView = itemView.findViewById(R.id.txtCategoryAmount)
         val progress: ProgressBar = itemView.findViewById(R.id.progressCategory)
+        val daysLeft: TextView = itemView.findViewById(R.id.txtDaysLeft)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -31,7 +33,8 @@ class CategoryAdapter(
         val category = categories[position]
 
         holder.txtName.text = category.name
-        holder.txtAmount.text = "R${category.spentAmount} / R${category.budgetLimit}"
+        holder.txtAmount.text = "R${category.spentAmount.toInt()}/R${category.budgetLimit.toInt()}"
+        holder.daysLeft.text = "📅7 days left"
 
         val percent = if (category.budgetLimit > 0) {
             ((category.spentAmount / category.budgetLimit) * 100).toInt()
@@ -40,6 +43,10 @@ class CategoryAdapter(
         }
 
         holder.progress.progress = percent.coerceIn(0, 100)
+        holder.progress.progressTintList =
+            android.content.res.ColorStateList.valueOf(Color.parseColor(category.color))
+        holder.progress.progressBackgroundTintList =
+            android.content.res.ColorStateList.valueOf(Color.BLACK)
     }
 
     fun updateData(newCategories: List<Category>) {
