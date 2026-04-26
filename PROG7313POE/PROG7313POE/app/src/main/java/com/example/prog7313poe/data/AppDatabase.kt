@@ -8,7 +8,10 @@ import com.example.prog7313poe.model.User
 import com.example.prog7313poe.model.Category
 import com.example.prog7313poe.viewModel.UserDao
 
-@Database(entities = [User::class, Category::class], version = 2)
+@Database(
+    entities = [User::class, Category::class],
+    version = 2
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
