@@ -62,29 +62,28 @@ class InsightsActivity : AppCompatActivity() {
     private fun renderInsights(container: LinearLayout) {
         container.removeAllViews()
 
-        container.addView(
-            createInsightCard(
-                weeklyEntertainmentInsight(),
-                "#C56A1A",
-                "#FF7A45"
+        if (categories.isEmpty()) {
+            container.addView(
+                createInsightCard(
+                    "No categories yet. Add one to see insights.",
+                    "#444444",
+                    "#888888"
+                )
             )
-        )
+            return
+        }
 
-        container.addView(
-            createInsightCard(
-                groceriesInsight(),
-                "#006F66",
-                "#46E0D2"
-            )
-        )
+        categories.forEach { category ->
+            val (text, color) = generateCategoryInsight(category)
 
-        container.addView(
-            createInsightCard(
-                budgetAlertInsight(),
-                "#7C145D",
-                "#D9367E"
+            container.addView(
+                createInsightCard(
+                    text,
+                    color,
+                    color
+                )
             )
-        )
+        }
 
         val tip = TextView(this)
         tip.text = "Tip: Try the 7 day challenge to save extra!"
@@ -93,60 +92,65 @@ class InsightsActivity : AppCompatActivity() {
         tip.setTypeface(null, android.graphics.Typeface.BOLD)
         tip.gravity = Gravity.CENTER
         tip.setPadding(0, 16, 0, 0)
+
         container.addView(tip)
     }
 
-    private fun weeklyEntertainmentInsight(): String {
+    private fun generateCategoryInsight(category: Category): Pair<String, String> {
+        val spent = category.spentAmount
+        val budget = category.budgetLimit
+
+        if (budget <= 0) {
+            return Pair(
+                "${category.name}: No budget set.",
+                "#9E9E9E"
+            )
+        }
+
+        val percent = ((spent / budget) * 100).toInt()
+        val daysLeft = getDaysLeftInMonth()
+
+        return when {
+            spent == 0.0 -> {
+                Pair(
+                    "${category.name}: No spending yet. Budget is R${budget.toInt()}.",
+                    "#2196F3"
+                )
+            }
+
+            percent < 50 -> {
+                Pair(
+                    "${category.name}: Great job! Only $percent% used.",
+                    "#4CAF50"
+                )
+            }
+
+            percent in 50..99 -> {
+                Pair(
+                    "${category.name}: You're at $percent%. $daysLeft days left.",
+                    "#FFC107"
+                )
+            }
+
+            percent == 100 -> {
+                Pair(
+                    "${category.name}: Budget fully used.",
+                    "#9C27B0"
+                )
+            }
+
+            else -> {
+                Pair(
+                    "${category.name}: Over budget! R${spent.toInt()}/R${budget.toInt()}",
+                    "#F44336"
+                )
+            }
+        }
+    }
+
+    private fun getDaysLeftInMonth(): Int {
         val today = LocalDate.now()
-        val currentWeekStart = today.minusDays(6)
-        val previousWeekStart = today.minusDays(13)
-        val previousWeekEnd = today.minusDays(7)
-
-        val current = expenses
-            .filter { it.category.equals("Entertainment", ignoreCase = true) }
-            .filter { parseExpenseDate(it.date)?.let { date -> !date.isBefore(currentWeekStart) && !date.isAfter(today) } == true }
-            .sumOf { it.amount }
-
-        val previous = expenses
-            .filter { it.category.equals("Entertainment", ignoreCase = true) }
-            .filter { parseExpenseDate(it.date)?.let { date -> !date.isBefore(previousWeekStart) && !date.isAfter(previousWeekEnd) } == true }
-            .sumOf { it.amount }
-
-        if (current == 0.0 && previous == 0.0) {
-            return "Track entertainment spending here once you add expenses."
-        }
-
-        if (previous <= 0.0) {
-            return "Entertainment spending is R${"%.0f".format(current)} this week."
-        }
-
-        val percent = (((current - previous) / previous) * 100).toInt()
-        val direction = if (percent >= 0) "more" else "less"
-
-        return "${kotlin.math.abs(percent)}% $direction on entertainment: R${"%.0f".format(current)} vs R${"%.0f".format(previous)} last week."
-    }
-
-    private fun groceriesInsight(): String {
-        val groceries = categories.firstOrNull { it.name.equals("Groceries", ignoreCase = true) }
-            ?: return "Groceries budget will appear once categories are loaded."
-
-        return if (groceries.spentAmount <= groceries.budgetLimit) {
-            "On track with groceries budget so far: R${"%.0f".format(groceries.spentAmount)}/R${"%.0f".format(groceries.budgetLimit)}"
-        } else {
-            "Groceries budget has been exceeded: R${"%.0f".format(groceries.spentAmount)}/R${"%.0f".format(groceries.budgetLimit)}"
-        }
-    }
-
-    private fun budgetAlertInsight(): String {
-        val overBudget = categories
-            .filter { it.budgetLimit > 0 && it.spentAmount > it.budgetLimit }
-            .maxByOrNull { it.spentAmount - it.budgetLimit }
-
-        return if (overBudget == null) {
-            "Budget goals are currently on track."
-        } else {
-            "${overBudget.name} budget goals have not been met."
-        }
+        return today.lengthOfMonth() - today.dayOfMonth
     }
 
     private fun createInsightCard(text: String, startColor: String, endColor: String): TextView {
