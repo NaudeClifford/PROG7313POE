@@ -14,6 +14,7 @@ import com.example.prog7313poe.R
 import com.example.prog7313poe.data.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import com.example.prog7313poe.ui.seedDefaultCategoriesIfNeeded
 
 class Dashboard : AppCompatActivity() {
 

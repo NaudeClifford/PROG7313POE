@@ -18,6 +18,7 @@ import com.example.prog7313poe.data.AppDatabase
 import com.example.prog7313poe.model.Category
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
+import com.example.prog7313poe.ui.seedDefaultCategoriesIfNeeded
 
 class BudgetCategoriesActivity : AppCompatActivity() {
 

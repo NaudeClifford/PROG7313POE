@@ -13,8 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PROG7313POE">
 
-        <!-- 🔥 YOUR NEW SCREEN -->
-
 
         <activity
             android:name=".ui.Signin"
