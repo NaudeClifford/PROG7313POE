@@ -30,6 +30,7 @@ class BudgetCategoriesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_categories)
         setupBottomNavigation(R.id.nav_budget)
+        setupBottomNavigation(R.id.nav_dashboard)
 
         val db = AppDatabase.getDatabase(this)
         val recycler = findViewById<RecyclerView>(R.id.recyclerCategories)
@@ -154,6 +155,10 @@ class BudgetCategoriesActivity : AppCompatActivity() {
             .show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBottomNavigation(R.id.nav_budget)
+    }
     private fun applyGradient(textView: TextView) {
         textView.viewTreeObserver.addOnGlobalLayoutListener {
             val width = textView.width.toFloat()

@@ -252,6 +252,10 @@ class AddExpense : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBottomNavigation(R.id.nav_add_expense)
+    }
     private fun applyGradient(textView: TextView) {
         textView.viewTreeObserver.addOnGlobalLayoutListener {
             val width = textView.width.toFloat()

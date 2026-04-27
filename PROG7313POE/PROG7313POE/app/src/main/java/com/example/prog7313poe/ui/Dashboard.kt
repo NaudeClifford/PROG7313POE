@@ -94,6 +94,11 @@ class Dashboard : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBottomNavigation(R.id.nav_dashboard)
+    }
+
     private fun applyGradient(textView: TextView) {
         textView.viewTreeObserver.addOnGlobalLayoutListener {
             val width = textView.width.toFloat()

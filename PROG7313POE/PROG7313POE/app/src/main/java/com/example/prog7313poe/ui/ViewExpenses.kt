@@ -308,6 +308,11 @@ class ViewExpenses : AppCompatActivity() {
         container.addView(text)
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBottomNavigation(R.id.nav_view_expenses)
+    }
+
     private fun applyGradient(textView: TextView) {
         textView.viewTreeObserver.addOnGlobalLayoutListener {
             val width = textView.width.toFloat()

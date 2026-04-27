@@ -9,10 +9,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 fun AppCompatActivity.setupBottomNavigation(@IdRes selectedItemId: Int? = null) {
     val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation) ?: return
 
+    // Prevent old listeners interfering
+    bottomNavigation.setOnItemSelectedListener(null)
+
+    selectedItemId?.let {
+        bottomNavigation.selectedItemId = it
+    }
+
     bottomNavigation.setOnItemSelectedListener { menuItem ->
-        if (menuItem.itemId == selectedItemId) {
-            return@setOnItemSelectedListener true
-        }
+        if (menuItem.itemId == selectedItemId) return@setOnItemSelectedListener true
 
         val destination = when (menuItem.itemId) {
             R.id.nav_dashboard -> Dashboard::class.java
@@ -29,9 +34,5 @@ fun AppCompatActivity.setupBottomNavigation(@IdRes selectedItemId: Int? = null) 
             )
             true
         } ?: false
-    }
-
-    selectedItemId?.let {
-        bottomNavigation.menu.findItem(it)?.isChecked = true
     }
 }

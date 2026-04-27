@@ -67,6 +67,11 @@ class NoSpendChallengeActivity : AppCompatActivity() {
         savedText.text = "R$moneySaved saved by not spending"
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupBottomNavigation(R.id.nav_challenge)
+    }
+
     private fun applyGradient(textView: TextView) {
         textView.viewTreeObserver.addOnGlobalLayoutListener {
             val width = textView.width.toFloat()
