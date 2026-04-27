@@ -2,8 +2,12 @@ package com.example.prog7313poe.ui
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -65,9 +69,8 @@ class InsightsActivity : AppCompatActivity() {
         if (categories.isEmpty()) {
             container.addView(
                 createInsightCard(
-                    "No categories yet. Add one to see insights.",
-                    "#444444",
-                    "#888888"
+                    "No categories yet: Add one to see insights.",
+                    "#444444"
                 )
             )
             return
@@ -77,11 +80,7 @@ class InsightsActivity : AppCompatActivity() {
             val (text, color) = generateCategoryInsight(category)
 
             container.addView(
-                createInsightCard(
-                    text,
-                    color,
-                    color
-                )
+                createInsightCard(text, color)
             )
         }
 
@@ -89,9 +88,9 @@ class InsightsActivity : AppCompatActivity() {
         tip.text = "Tip: Try the 7 day challenge to save extra!"
         tip.setTextColor(android.graphics.Color.WHITE)
         tip.textSize = 18f
-        tip.setTypeface(null, android.graphics.Typeface.BOLD)
+        tip.setTypeface(null, Typeface.BOLD)
         tip.gravity = Gravity.CENTER
-        tip.setPadding(0, 16, 0, 0)
+        tip.setPadding(0, 24, 0, 0)
 
         container.addView(tip)
     }
@@ -111,40 +110,30 @@ class InsightsActivity : AppCompatActivity() {
         val daysLeft = getDaysLeftInMonth()
 
         return when {
-            spent == 0.0 -> {
-                Pair(
-                    "${category.name}: No spending yet. Budget is R${budget.toInt()}.",
-                    "#2196F3"
-                )
-            }
+            spent == 0.0 -> Pair(
+                "${category.name}: No spending yet. Budget is R${budget.toInt()}.",
+                "#2196F3"
+            )
 
-            percent < 50 -> {
-                Pair(
-                    "${category.name}: Great job! Only $percent% used.",
-                    "#4CAF50"
-                )
-            }
+            percent < 50 -> Pair(
+                "${category.name}: Great job! Only $percent% used.",
+                "#4CAF50"
+            )
 
-            percent in 50..99 -> {
-                Pair(
-                    "${category.name}: You're at $percent%. $daysLeft days left.",
-                    "#FFC107"
-                )
-            }
+            percent in 50..99 -> Pair(
+                "${category.name}: You're at $percent%. $daysLeft days left.",
+                "#FFC107"
+            )
 
-            percent == 100 -> {
-                Pair(
-                    "${category.name}: Budget fully used.",
-                    "#9C27B0"
-                )
-            }
+            percent == 100 -> Pair(
+                "${category.name}: Budget fully used.",
+                "#9C27B0"
+            )
 
-            else -> {
-                Pair(
-                    "${category.name}: Over budget! R${spent.toInt()}/R${budget.toInt()}",
-                    "#F44336"
-                )
-            }
+            else -> Pair(
+                "${category.name}: Over budget! R${spent.toInt()}/R${budget.toInt()}",
+                "#F44336"
+            )
         }
     }
 
@@ -153,25 +142,47 @@ class InsightsActivity : AppCompatActivity() {
         return today.lengthOfMonth() - today.dayOfMonth
     }
 
-    private fun createInsightCard(text: String, startColor: String, endColor: String): TextView {
+    private fun createInsightCard(text: String, color: String): TextView {
         val card = TextView(this)
-        card.text = text
-        card.setTextColor(android.graphics.Color.WHITE)
+
+        val parts = text.split(":", limit = 2)
+        val title = parts.getOrNull(0) ?: ""
+        val message = parts.getOrNull(1)?.trim() ?: ""
+
+        val fullText = "$title\n$message"
+        val spannable = SpannableString(fullText)
+
+        spannable.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            title.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        card.text = spannable
         card.textSize = 16f
-        card.gravity = Gravity.CENTER
-        card.setPadding(18, 18, 18, 18)
+        card.setLineSpacing(6f, 1.1f)
+        card.setPadding(32, 28, 32, 28)
+
+        if (color.equals("#FFC107", true)) {
+            card.setTextColor(android.graphics.Color.BLACK)
+        } else {
+            card.setTextColor(android.graphics.Color.WHITE)
+        }
 
         val params = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        params.setMargins(0, 0, 0, 20)
+        params.setMargins(0, 0, 0, 24)
         card.layoutParams = params
 
-        card.background = GradientDrawable(
-            GradientDrawable.Orientation.TL_BR,
-            intArrayOf(startColor.toColorInt(), endColor.toColorInt())
-        )
+        val background = GradientDrawable()
+        background.setColor(color.toColorInt())
+        background.cornerRadius = 32f
+
+        card.background = background
+        card.elevation = 10f
 
         return card
     }
